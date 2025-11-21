@@ -1,65 +1,134 @@
-import Image from "next/image";
+import Link from 'next/link'
+import { client } from '@/lib/sanity'
+import { Submission } from '@/lib/sanity'
+import SubmissionCard from '@/components/SubmissionCard'
 
-export default function Home() {
+async function getSubmissions(): Promise<Submission[]> {
+  const query = `
+    *[_type == "submission" && approved == true] | order(publishedAt desc) {
+      _id,
+      _createdAt,
+      title,
+      slug,
+      company,
+      description,
+      screenshot,
+      timeWasted,
+      category,
+      severity,
+      submittedBy,
+      upvotes,
+      approved,
+      publishedAt
+    }
+  `
+  return client.fetch(query)
+}
+
+async function getTotalStats() {
+  const submissions = await client.fetch<Submission[]>(
+    `*[_type == "submission" && approved == true]{ timeWasted }`
+  )
+
+  const totalTimeWasted = submissions.reduce((sum, s) => sum + (s.timeWasted || 0), 0)
+
+  return {
+    totalSubmissions: submissions.length,
+    totalTimeWasted
+  }
+}
+
+export default async function Home() {
+  const submissions = await getSubmissions()
+  const stats = await getTotalStats()
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+    <div className="min-h-screen bg-yellow-400">
+      {/* Header */}
+      <header className="border-b-8 border-black bg-white">
+        <div className="container mx-auto px-4 py-8">
+          <h1 className="text-5xl md:text-7xl font-black uppercase text-center mb-4">
+            Nothing Fucking Works
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+          <p className="text-xl text-center font-bold">
+            A collection of broken tech wasting everyone&apos;s time
+          </p>
+
+          {/* Stats */}
+          <div className="flex flex-wrap justify-center gap-4 mt-8">
+            <div className="bg-black text-white px-6 py-3 border-4 border-black font-black">
+              <span className="text-3xl">{stats.totalSubmissions}</span>
+              <span className="ml-2 text-sm uppercase">Broken Things</span>
+            </div>
+            <div className="bg-red-500 text-white px-6 py-3 border-4 border-black font-black">
+              <span className="text-3xl">{stats.totalTimeWasted?.toLocaleString()}</span>
+              <span className="ml-2 text-sm uppercase">Minutes Wasted</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* Navigation */}
+      <nav className="bg-black text-white border-b-4 border-black sticky top-0 z-10">
+        <div className="container mx-auto px-4">
+          <div className="flex justify-center gap-4 py-4">
+            <Link
+              href="/"
+              className="px-6 py-2 bg-white text-black font-bold uppercase hover:bg-yellow-400 transition-colors"
             >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+              Home
+            </Link>
+            <Link
+              href="/offenders"
+              className="px-6 py-2 bg-white text-black font-bold uppercase hover:bg-yellow-400 transition-colors"
             >
-              Learning
-            </a>{" "}
-            center.
+              Worst Offenders
+            </Link>
+            <Link
+              href="/submit"
+              className="px-6 py-2 bg-yellow-400 text-black font-bold uppercase hover:bg-white transition-colors"
+            >
+              Submit Your Pain
+            </Link>
+          </div>
+        </div>
+      </nav>
+
+      {/* Main Content */}
+      <main className="container mx-auto px-4 py-12">
+        {submissions.length === 0 ? (
+          <div className="text-center py-20">
+            <div className="bg-white border-4 border-black p-12 inline-block shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+              <h2 className="text-3xl font-black mb-4">NO SUBMISSIONS YET</h2>
+              <p className="text-xl mb-6">Be the first to share your broken tech!</p>
+              <Link
+                href="/submit"
+                className="inline-block bg-black text-white font-black uppercase py-4 px-8 border-4 border-black hover:bg-gray-800 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+              >
+                Submit Now
+              </Link>
+            </div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {submissions.map((submission) => (
+              <SubmissionCard key={submission._id} submission={submission} />
+            ))}
+          </div>
+        )}
+      </main>
+
+      {/* Footer */}
+      <footer className="border-t-8 border-black bg-white mt-20">
+        <div className="container mx-auto px-4 py-8 text-center">
+          <p className="font-bold">
+            Built with frustration. Powered by collective rage.
+          </p>
+          <p className="text-sm mt-2 text-gray-600">
+            Submit your broken tech experiences and let the world know.
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+      </footer>
     </div>
-  );
+  )
 }
