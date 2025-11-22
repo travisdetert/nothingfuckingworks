@@ -5,6 +5,7 @@ import { Metadata } from 'next'
 import { client, urlFor, Submission } from '@/lib/sanity'
 import Giscus from '@/components/Giscus'
 import MeTooButton from '@/components/MeTooButton'
+import Header from '@/components/Header'
 
 interface PageProps {
   params: Promise<{ slug: string }>
@@ -90,35 +91,7 @@ export default async function PostPage({ params }: PageProps) {
 
   return (
     <>
-      {/* Header */}
-      <header className="border-b-8 border-black bg-white">
-        <div className="container mx-auto px-4 py-6">
-          <Link href="/">
-            <h1 className="text-3xl md:text-5xl font-black uppercase text-center hover:underline cursor-pointer">
-              Nothing Fucking Works
-            </h1>
-          </Link>
-        </div>
-        {/* Navigation */}
-        <nav className="bg-black text-white border-t-4 border-black">
-          <div className="container mx-auto px-4">
-            <div className="flex justify-center gap-4 py-3">
-              <Link
-                href="/"
-                className="px-4 py-2 bg-white text-black font-bold uppercase hover:bg-yellow-400 transition-colors text-sm"
-              >
-                Home
-              </Link>
-              <Link
-                href="/submit"
-                className="px-4 py-2 bg-yellow-400 text-black font-bold uppercase hover:bg-white transition-colors text-sm"
-              >
-                Submit Your Pain
-              </Link>
-            </div>
-          </div>
-        </nav>
-      </header>
+      <Header />
 
       {/* Main Content */}
       <main className="overflow-y-auto bg-yellow-400">

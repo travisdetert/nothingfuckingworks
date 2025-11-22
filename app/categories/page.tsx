@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { client } from '@/lib/sanity'
 import { categoryHierarchy, getPrimaryCategoryLabel } from '@/lib/categories'
+import Header from '@/components/Header'
 
 interface CategoryStats {
   primaryCategory: string
@@ -61,48 +62,7 @@ export default async function CategoriesPage() {
 
   return (
     <div className="min-h-screen bg-yellow-400">
-      {/* Header */}
-      <header className="border-b-8 border-black bg-white">
-        <div className="container mx-auto px-4 py-8">
-          <Link href="/">
-            <h1 className="text-4xl md:text-6xl font-black uppercase text-center hover:underline cursor-pointer">
-              Nothing Fucking Works
-            </h1>
-          </Link>
-        </div>
-      </header>
-
-      {/* Navigation */}
-      <nav className="bg-black text-white border-b-4 border-black">
-        <div className="container mx-auto px-4">
-          <div className="flex justify-center gap-4 py-4">
-            <Link
-              href="/"
-              className="px-6 py-2 bg-white text-black font-bold uppercase hover:bg-yellow-400 transition-colors"
-            >
-              Home
-            </Link>
-            <Link
-              href="/categories"
-              className="px-6 py-2 bg-yellow-400 text-black font-bold uppercase"
-            >
-              Categories
-            </Link>
-            <Link
-              href="/offenders"
-              className="px-6 py-2 bg-white text-black font-bold uppercase hover:bg-yellow-400 transition-colors"
-            >
-              Offenders
-            </Link>
-            <Link
-              href="/submit"
-              className="px-6 py-2 bg-white text-black font-bold uppercase hover:bg-yellow-400 transition-colors"
-            >
-              Submit
-            </Link>
-          </div>
-        </div>
-      </nav>
+      <Header />
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-6 max-w-7xl">

@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { client } from '@/lib/sanity'
 import { Submission } from '@/lib/sanity'
 import SubmissionCard from '@/components/SubmissionCard'
+import Header from '@/components/Header'
 
 function formatTimeWasted(minutes: number): { value: string; unit: string; subtext: string } {
   if (minutes < 60) {
@@ -66,7 +67,9 @@ async function getTotalStats() {
     severityCount[s.severity as keyof typeof severityCount]++
 
     // Count category
-    categoryCount[s.category] = (categoryCount[s.category] || 0) + 1
+    if (s.category) {
+      categoryCount[s.category] = (categoryCount[s.category] || 0) + 1
+    }
 
     // Add all Me Too time and track unique people
     if (s.meToos) {
@@ -160,14 +163,7 @@ export default async function Home({ searchParams }: PageProps) {
 
   return (
     <div className="min-h-screen bg-yellow-400">
-      {/* Header */}
-      <header className="border-b-4 border-black bg-white">
-        <div className="container mx-auto px-4 py-3">
-          <h1 className="text-3xl md:text-5xl font-black uppercase text-center">
-            Nothing Fucking Works
-          </h1>
-        </div>
-      </header>
+      <Header />
 
       {/* Stats Bar */}
       <div className="bg-black border-b-4 border-black">
