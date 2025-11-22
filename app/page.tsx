@@ -53,7 +53,7 @@ async function getTotalStats() {
   let totalReports = 0
   const uniquePeople = new Set<string>()
   const companyTimeMap = new Map<string, number>()
-  const severityCount = { mild: 0, moderate: 0, severe: 0 }
+  const severityCount = { trivial: 0, mild: 0, moderate: 0, serious: 0, severe: 0, critical: 0 }
   const categoryCount: Record<string, number> = {}
   let mostRecentTimestamp = ''
 

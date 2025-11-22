@@ -35,9 +35,12 @@ const categoryLabels: Record<string, string> = {
 }
 
 const severityLabels: Record<string, string> = {
-  mild: '😠 Mildly Annoying',
-  moderate: '🤬 Rage Inducing',
-  severe: '💀 Soul Crushing',
+  trivial: '😐 Trivial',
+  mild: '😠 Mild',
+  moderate: '😤 Moderate',
+  serious: '🤬 Serious',
+  severe: '💀 Severe',
+  critical: '☠️ Critical',
 }
 
 export default function SubmissionCard({ submission }: SubmissionCardProps) {

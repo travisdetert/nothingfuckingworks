@@ -99,8 +99,24 @@ export default function SubmissionForm() {
             name="company"
             required
             className="w-full p-3 border-2 border-black focus:outline-none focus:ring-4 focus:ring-yellow-400"
-            placeholder="e.g., Microsoft Teams, iPhone 15, Tesla Model 3"
+            placeholder="e.g., Microsoft, Apple, Tesla"
           />
+        </div>
+
+        <div>
+          <label htmlFor="modelNumber" className="block font-bold mb-2 uppercase text-sm">
+            Model/Version Number (Optional)
+          </label>
+          <input
+            type="text"
+            id="modelNumber"
+            name="modelNumber"
+            className="w-full p-3 border-2 border-black focus:outline-none focus:ring-4 focus:ring-yellow-400"
+            placeholder="e.g., iPhone 15 Pro, Model 3, Windows 11, v2.5.1"
+          />
+          <p className="text-xs text-gray-600 mt-1">
+            Specify the exact model, version, or SKU if applicable
+          </p>
         </div>
 
         <div>
@@ -229,9 +245,12 @@ export default function SubmissionForm() {
             className="w-full p-3 border-2 border-black focus:outline-none focus:ring-4 focus:ring-yellow-400 bg-white"
           >
             <option value="">Select...</option>
-            <option value="mild">😠 Mildly Annoying</option>
-            <option value="moderate">🤬 Rage Inducing</option>
-            <option value="severe">💀 Soul Crushing</option>
+            <option value="trivial">😐 Trivial - Minor inconvenience</option>
+            <option value="mild">😠 Mild - Annoying but workable</option>
+            <option value="moderate">😤 Moderate - Frustrating issue</option>
+            <option value="serious">🤬 Serious - Rage inducing</option>
+            <option value="severe">💀 Severe - Soul crushing</option>
+            <option value="critical">☠️ Critical - Completely broken</option>
           </select>
         </div>
 

@@ -74,9 +74,12 @@ const categoryLabels: Record<string, string> = {
 }
 
 const severityLabels: Record<string, string> = {
-  mild: '😠 Mildly Annoying',
-  moderate: '🤬 Rage Inducing',
-  severe: '💀 Soul Crushing',
+  trivial: '😐 Trivial',
+  mild: '😠 Mild',
+  moderate: '😤 Moderate',
+  serious: '🤬 Serious',
+  severe: '💀 Severe',
+  critical: '☠️ Critical',
 }
 
 export default async function PostPage({ params }: PageProps) {
@@ -305,6 +308,85 @@ export default async function PostPage({ params }: PageProps) {
             </div>
           )
         })()}
+
+        {/* Contact Responsible Party Section */}
+        <div className="bg-white border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-6 mb-6">
+          <h2 className="text-2xl font-black uppercase mb-4 flex items-center gap-2">
+            <span>📢</span>
+            <span>Contact {submission.company}</span>
+          </h2>
+
+          <div className="bg-yellow-50 border-2 border-black p-4 mb-4">
+            <p className="font-bold mb-2">Want to report this issue directly?</p>
+            <p className="text-sm mb-3">
+              The best way to get things fixed is to let {submission.company} know about this problem.
+              Here are some ways to reach them:
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Support Contact */}
+            <div className="border-2 border-black p-4 bg-gray-50">
+              <h3 className="font-black uppercase text-sm mb-2 flex items-center gap-2">
+                <span>💬</span>
+                <span>Customer Support</span>
+              </h3>
+              <ul className="space-y-2 text-sm">
+                <li>• Check {submission.company}'s official website for support contact</li>
+                <li>• Look for "Contact Us" or "Help" sections</li>
+                <li>• Include screenshots and error details</li>
+              </ul>
+            </div>
+
+            {/* Social Media */}
+            <div className="border-2 border-black p-4 bg-gray-50">
+              <h3 className="font-black uppercase text-sm mb-2 flex items-center gap-2">
+                <span>📱</span>
+                <span>Social Media</span>
+              </h3>
+              <ul className="space-y-2 text-sm">
+                <li>• Tweet at their official Twitter/X account</li>
+                <li>• Post on their Facebook page</li>
+                <li>• Tag them on LinkedIn</li>
+                <li>• Public visibility often gets faster responses</li>
+              </ul>
+            </div>
+
+            {/* Bug Reports */}
+            <div className="border-2 border-black p-4 bg-gray-50">
+              <h3 className="font-black uppercase text-sm mb-2 flex items-center gap-2">
+                <span>🐛</span>
+                <span>Bug Reports</span>
+              </h3>
+              <ul className="space-y-2 text-sm">
+                <li>• Search for their bug tracker or issue reporter</li>
+                <li>• Check GitHub if they're an open-source project</li>
+                <li>• Look for community forums or feedback portals</li>
+              </ul>
+            </div>
+
+            {/* Escalation */}
+            <div className="border-2 border-black p-4 bg-gray-50">
+              <h3 className="font-black uppercase text-sm mb-2 flex items-center gap-2">
+                <span>⚡</span>
+                <span>Escalation</span>
+              </h3>
+              <ul className="space-y-2 text-sm">
+                <li>• Request to speak with a supervisor</li>
+                <li>• File a formal complaint if applicable</li>
+                <li>• Consider regulatory bodies for serious issues</li>
+                <li>• Document everything for your records</li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="mt-4 p-3 bg-red-50 border-2 border-red-600">
+            <p className="text-sm font-bold text-red-900">
+              <span className="text-lg">⚠️</span> Be respectful when contacting companies.
+              Clear, detailed reports are more likely to result in fixes than angry complaints.
+            </p>
+          </div>
+        </div>
 
         {/* Comments Section */}
         {process.env.NEXT_PUBLIC_GISCUS_REPO && (

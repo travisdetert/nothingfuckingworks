@@ -18,9 +18,12 @@ async function getOffendersStats(): Promise<OffenderStats[]> {
   const companyMap = new Map<string, { count: number; totalTime: number; severities: number[] }>()
 
   const severityValues: Record<string, number> = {
-    mild: 1,
-    moderate: 2,
-    severe: 3,
+    trivial: 1,
+    mild: 2,
+    moderate: 3,
+    serious: 4,
+    severe: 5,
+    critical: 6,
   }
 
   submissions.forEach((sub) => {

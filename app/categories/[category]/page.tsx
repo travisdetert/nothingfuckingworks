@@ -58,7 +58,7 @@ async function getCategoryStats(category: string) {
   let totalReports = 0
   const subcategoryCount: Record<string, number> = {}
   const tagCount: Record<string, number> = {}
-  const severityCount = { mild: 0, moderate: 0, severe: 0 }
+  const severityCount = { trivial: 0, mild: 0, moderate: 0, serious: 0, severe: 0, critical: 0 }
 
   submissions.forEach(s => {
     // Count subcategories
@@ -84,9 +84,12 @@ async function getCategoryStats(category: string) {
   })
 
   const severityValues: Record<string, number> = {
-    mild: 1,
-    moderate: 2,
-    severe: 3,
+    trivial: 1,
+    mild: 2,
+    moderate: 3,
+    serious: 4,
+    severe: 5,
+    critical: 6,
   }
 
   const avgSeverity = submissions.length > 0

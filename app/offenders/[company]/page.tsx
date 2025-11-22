@@ -54,9 +54,12 @@ async function getCompanyStats(company: string) {
   })
 
   const severityValues: Record<string, number> = {
-    mild: 1,
-    moderate: 2,
-    severe: 3,
+    trivial: 1,
+    mild: 2,
+    moderate: 3,
+    serious: 4,
+    severe: 5,
+    critical: 6,
   }
 
   const avgSeverity = submissions.length > 0

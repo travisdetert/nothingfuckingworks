@@ -1,5 +1,45 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { writeClient } from '@/lib/sanity'
+import { writeClient, client } from '@/lib/sanity'
+
+// Helper function to create slug from product name
+function createSlug(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/[^\w\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .trim()
+}
+
+// Helper function to upsert product
+async function upsertProduct(company: string, modelNumber?: string) {
+  // Try to find existing product by company and model number
+  const query = modelNumber
+    ? `*[_type == "product" && company == $company && modelNumber == $modelNumber][0]`
+    : `*[_type == "product" && company == $company && !defined(modelNumber)][0]`
+
+  const existingProduct = await client.fetch(query, { company, modelNumber })
+
+  if (existingProduct) {
+    return existingProduct._id
+  }
+
+  // Create new product
+  const productName = modelNumber ? `${company} ${modelNumber}` : company
+  const slug = createSlug(productName)
+
+  const newProduct = await writeClient.create({
+    _type: 'product',
+    name: productName,
+    slug: { _type: 'slug', current: slug },
+    company,
+    modelNumber: modelNumber || undefined,
+    productType: 'other', // Default, can be updated manually in Sanity
+    discontinued: false,
+  })
+
+  return newProduct._id
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -14,6 +54,7 @@ export async function POST(request: NextRequest) {
     const severity = formData.get('severity') as string
     const submittedBy = formData.get('submittedBy') as string
     const screenshot = formData.get('screenshot') as File
+    const modelNumber = formData.get('modelNumber') as string | null
 
     // Get tags array
     const tags = formData.getAll('tags[]') as string[]
@@ -30,6 +71,9 @@ export async function POST(request: NextRequest) {
       filename: screenshot.name,
     })
 
+    // Upsert product
+    const productId = await upsertProduct(company, modelNumber || undefined)
+
     // Create the submission document with initial meToo entry
     const submission = await writeClient.create({
       _type: 'submission',
@@ -41,6 +85,10 @@ export async function POST(request: NextRequest) {
       tags: tags.length > 0 ? tags : undefined,
       severity,
       submittedBy: submittedBy || 'Anonymous',
+      product: {
+        _type: 'reference',
+        _ref: productId,
+      },
       screenshot: {
         _type: 'image',
         asset: {
