@@ -173,7 +173,7 @@ export default function SubmissionCard({ submission }: SubmissionCardProps) {
           onClick={() => setShowMeTooModal(true)}
           className="w-full px-4 py-3 bg-yellow-400 text-black font-black uppercase text-base border-4 border-black hover:bg-yellow-500 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all"
         >
-          👋 Me Too! This Happened To Me
+          🤬 I am also fucking annoyed with this bullshit
         </button>
       </div>
 

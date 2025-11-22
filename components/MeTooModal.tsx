@@ -69,12 +69,12 @@ export default function MeTooModal({
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="bg-white border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] max-w-md w-full">
         <div className="bg-yellow-400 border-b-4 border-black p-4">
-          <h2 className="text-2xl font-black uppercase">Me Too!</h2>
+          <h2 className="text-2xl font-black uppercase">🤬 I'm Fucking Annoyed Too!</h2>
         </div>
 
         <div className="p-6">
           <p className="mb-4 font-bold">
-            This happened to you too? Add your wasted time to:
+            This bullshit happened to you too? Add your wasted time:
           </p>
           <p className="mb-6 text-sm bg-gray-100 p-3 border-2 border-black">
             {submissionTitle}
