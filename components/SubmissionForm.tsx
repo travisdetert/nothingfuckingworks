@@ -1,11 +1,14 @@
 'use client'
 
 import { useState, FormEvent } from 'react'
+import { categoryHierarchy, getSubcategoriesForPrimary, tagLabels } from '@/lib/categories'
 
 export default function SubmissionForm() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
+  const [selectedPrimaryCategory, setSelectedPrimaryCategory] = useState('')
+  const [selectedTags, setSelectedTags] = useState<string[]>([])
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -13,7 +16,13 @@ export default function SubmissionForm() {
     setMessage('')
     setError('')
 
-    const formData = new FormData(e.currentTarget)
+    const form = e.currentTarget
+    const formData = new FormData(form)
+
+    // Add selected tags to formData
+    selectedTags.forEach(tag => {
+      formData.append('tags[]', tag)
+    })
 
     try {
       const response = await fetch('/api/submit', {
@@ -25,16 +34,27 @@ export default function SubmissionForm() {
 
       if (response.ok) {
         setMessage(data.message)
-        e.currentTarget.reset()
+        form.reset()
+        setSelectedPrimaryCategory('')
+        setSelectedTags([])
       } else {
         setError(data.error || 'Submission failed')
       }
     } catch (err) {
+      console.error('Submission error:', err)
       setError('Network error. Please try again.')
     } finally {
       setIsSubmitting(false)
     }
   }
+
+  const handleTagToggle = (tag: string) => {
+    setSelectedTags(prev =>
+      prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]
+    )
+  }
+
+  const subcategories = getSubcategoriesForPrimary(selectedPrimaryCategory)
 
   return (
     <div className="max-w-2xl mx-auto bg-white border-4 border-black p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
@@ -111,43 +131,91 @@ export default function SubmissionForm() {
           />
         </div>
 
+        <div>
+          <label htmlFor="timeWasted" className="block font-bold mb-2 uppercase text-sm">
+            Time Wasted (minutes)
+          </label>
+          <input
+            type="number"
+            id="timeWasted"
+            name="timeWasted"
+            required
+            min="0"
+            className="w-full p-3 border-2 border-black focus:outline-none focus:ring-4 focus:ring-yellow-400"
+            placeholder="30"
+          />
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label htmlFor="timeWasted" className="block font-bold mb-2 uppercase text-sm">
-              Time Wasted (minutes)
+            <label htmlFor="primaryCategory" className="block font-bold mb-2 uppercase text-sm">
+              Primary Category
             </label>
-            <input
-              type="number"
-              id="timeWasted"
-              name="timeWasted"
+            <select
+              id="primaryCategory"
+              name="primaryCategory"
               required
-              min="0"
-              className="w-full p-3 border-2 border-black focus:outline-none focus:ring-4 focus:ring-yellow-400"
-              placeholder="30"
-            />
+              value={selectedPrimaryCategory}
+              onChange={(e) => setSelectedPrimaryCategory(e.target.value)}
+              className="w-full p-3 border-2 border-black focus:outline-none focus:ring-4 focus:ring-yellow-400 bg-white"
+            >
+              <option value="">Select primary category...</option>
+              {categoryHierarchy.map(cat => (
+                <option key={cat.value} value={cat.value}>
+                  {cat.emoji} {cat.label}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div>
-            <label htmlFor="category" className="block font-bold mb-2 uppercase text-sm">
-              Category
+            <label htmlFor="subcategory" className="block font-bold mb-2 uppercase text-sm">
+              Subcategory
             </label>
             <select
-              id="category"
-              name="category"
+              id="subcategory"
+              name="subcategory"
               required
-              className="w-full p-3 border-2 border-black focus:outline-none focus:ring-4 focus:ring-yellow-400 bg-white"
+              disabled={!selectedPrimaryCategory}
+              className="w-full p-3 border-2 border-black focus:outline-none focus:ring-4 focus:ring-yellow-400 bg-white disabled:bg-gray-100 disabled:cursor-not-allowed"
             >
-              <option value="">Select...</option>
-              <option value="software">Software/Apps</option>
-              <option value="website">Website/Web Service</option>
-              <option value="hardware">Hardware/Device</option>
-              <option value="os">Operating System</option>
-              <option value="iot">Smart Home/IoT</option>
-              <option value="payment">Payment/Banking</option>
-              <option value="transportation">Transportation</option>
-              <option value="other">Other</option>
+              <option value="">
+                {selectedPrimaryCategory ? 'Select subcategory...' : 'Select primary first...'}
+              </option>
+              {subcategories.map(sub => (
+                <option key={sub.value} value={sub.value}>
+                  {sub.label}
+                </option>
+              ))}
             </select>
           </div>
+        </div>
+
+        <div>
+          <label className="block font-bold mb-2 uppercase text-sm">
+            Tags (Optional - Select all that apply)
+          </label>
+          <div className="flex flex-wrap gap-2">
+            {Object.entries(tagLabels).map(([value, label]) => (
+              <button
+                key={value}
+                type="button"
+                onClick={() => handleTagToggle(value)}
+                className={`px-3 py-2 text-xs font-bold border-2 border-black transition-colors ${
+                  selectedTags.includes(value)
+                    ? 'bg-yellow-400 text-black'
+                    : 'bg-white text-black hover:bg-gray-100'
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+          {selectedTags.length > 0 && (
+            <p className="mt-2 text-sm text-gray-600">
+              Selected: {selectedTags.length} tag{selectedTags.length !== 1 ? 's' : ''}
+            </p>
+          )}
         </div>
 
         <div>

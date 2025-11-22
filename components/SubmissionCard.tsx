@@ -4,19 +4,33 @@ import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Submission, urlFor } from '@/lib/sanity'
+import MeTooModal from './MeTooModal'
 
 interface SubmissionCardProps {
   submission: Submission
 }
 
 const categoryLabels: Record<string, string> = {
-  software: 'Software/Apps',
-  website: 'Website/Web Service',
-  hardware: 'Hardware/Device',
-  os: 'Operating System',
-  iot: 'Smart Home/IoT',
-  payment: 'Payment/Banking',
-  transportation: 'Transportation',
+  software: 'Software',
+  website: 'Websites',
+  hardware: 'Hardware',
+  os: 'OS',
+  iot: 'IoT',
+  payment: 'Banking',
+  transportation: 'Transport',
+  mobile: 'Mobile',
+  gaming: 'Gaming',
+  enterprise: 'Enterprise',
+  social: 'Social',
+  streaming: 'Streaming',
+  ecommerce: 'E-commerce',
+  cloud: 'Cloud',
+  productivity: 'Productivity',
+  security: 'Security',
+  communication: 'Comms',
+  healthcare: 'Healthcare',
+  education: 'Education',
+  government: 'Government',
   other: 'Other',
 }
 
@@ -29,6 +43,19 @@ const severityLabels: Record<string, string> = {
 export default function SubmissionCard({ submission }: SubmissionCardProps) {
   const [upvotes, setUpvotes] = useState(submission.upvotes)
   const [hasVoted, setHasVoted] = useState(false)
+  const [showMeTooModal, setShowMeTooModal] = useState(false)
+
+  const meToos = submission.meToos || []
+  const times = meToos.map(m => m.timeWasted)
+
+  const [meTooStats, setMeTooStats] = useState({
+    totalIncidents: meToos.length,
+    uniquePeople: new Set(meToos.map(m => m.submittedBy)).size,
+    totalTime: times.reduce((sum, t) => sum + t, 0),
+    minTime: times.length > 0 ? Math.min(...times) : 0,
+    maxTime: times.length > 0 ? Math.max(...times) : 0,
+    avgTime: times.length > 0 ? Math.round(times.reduce((sum, t) => sum + t, 0) / times.length) : 0,
+  })
 
   const handleUpvote = async () => {
     if (hasVoted) return
@@ -48,6 +75,10 @@ export default function SubmissionCard({ submission }: SubmissionCardProps) {
     } catch (error) {
       console.error('Upvote failed:', error)
     }
+  }
+
+  const handleMeTooSuccess = (stats: { totalIncidents: number; uniquePeople: number; totalTime: number; minTime: number; maxTime: number; avgTime: number }) => {
+    setMeTooStats(stats)
   }
 
   const imageUrl = urlFor(submission.screenshot).width(800).height(600).url()
@@ -105,15 +136,51 @@ export default function SubmissionCard({ submission }: SubmissionCardProps) {
           <span className="px-3 py-1 bg-red-500 text-white font-bold text-xs uppercase">
             {severityLabels[submission.severity]}
           </span>
-          <span className="px-3 py-1 bg-yellow-400 text-black font-bold text-xs uppercase">
-            {submission.timeWasted} min wasted
-          </span>
+          {meTooStats.totalIncidents > 0 && (
+            <>
+              <span className="px-3 py-1 bg-blue-500 text-white font-bold text-xs uppercase">
+                {meTooStats.minTime} min (min)
+              </span>
+              <span className="px-3 py-1 bg-yellow-400 text-black font-bold text-xs uppercase">
+                {meTooStats.avgTime} min (avg)
+              </span>
+              <span className="px-3 py-1 bg-orange-500 text-white font-bold text-xs uppercase">
+                {meTooStats.maxTime} min (max)
+              </span>
+            </>
+          )}
         </div>
 
-        <div className="text-sm text-gray-600">
+        {/* Me Too Stats */}
+        {meTooStats.totalIncidents > 0 && (
+          <div className="mb-4 p-3 bg-gray-100 border-2 border-gray-300 text-sm">
+            <div className="font-bold">
+              👥 {meTooStats.uniquePeople} {meTooStats.uniquePeople === 1 ? 'person' : 'people'} •
+              🔁 {meTooStats.totalIncidents} {meTooStats.totalIncidents === 1 ? 'incident' : 'incidents'} •
+              ⏱️ {meTooStats.totalTime} min total
+            </div>
+          </div>
+        )}
+
+        <div className="text-sm text-gray-600 mb-3">
           <span>Submitted by {submission.submittedBy || 'Anonymous'}</span>
         </div>
+
+        <button
+          onClick={() => setShowMeTooModal(true)}
+          className="w-full px-4 py-3 bg-yellow-400 text-black font-black uppercase text-base border-4 border-black hover:bg-yellow-500 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all"
+        >
+          👋 Me Too! This Happened To Me
+        </button>
       </div>
+
+      <MeTooModal
+        isOpen={showMeTooModal}
+        onClose={() => setShowMeTooModal(false)}
+        submissionId={submission._id}
+        submissionTitle={submission.title}
+        onSuccess={handleMeTooSuccess}
+      />
     </div>
   )
 }

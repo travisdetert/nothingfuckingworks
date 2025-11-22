@@ -1,10 +1,21 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import { Metadata } from 'next'
 import { client, Submission } from '@/lib/sanity'
 import SubmissionCard from '@/components/SubmissionCard'
 
 interface PageProps {
   params: Promise<{ company: string }>
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { company } = await params
+  const decodedCompany = decodeURIComponent(company)
+
+  return {
+    title: `${decodedCompany} | Nothing Fucking Works`,
+    description: `See all the broken technology from ${decodedCompany}. Add your own frustrations to the list.`,
+  }
 }
 
 async function getSubmissionsByCompany(company: string): Promise<Submission[]> {
@@ -18,11 +29,11 @@ async function getSubmissionsByCompany(company: string): Promise<Submission[]> {
       company,
       description,
       screenshot,
-      timeWasted,
       category,
       severity,
       submittedBy,
       upvotes,
+      meToos,
       approved,
       publishedAt
     }
@@ -33,7 +44,14 @@ async function getSubmissionsByCompany(company: string): Promise<Submission[]> {
 async function getCompanyStats(company: string) {
   const submissions = await getSubmissionsByCompany(company)
 
-  const totalTimeWasted = submissions.reduce((sum, s) => sum + (s.timeWasted || 0), 0)
+  let totalTimeWasted = 0
+  submissions.forEach(s => {
+    if (s.meToos) {
+      s.meToos.forEach(m => {
+        totalTimeWasted += m.timeWasted || 0
+      })
+    }
+  })
 
   const severityValues: Record<string, number> = {
     mild: 1,

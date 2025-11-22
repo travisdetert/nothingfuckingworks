@@ -9,8 +9,8 @@ interface OffenderStats {
 }
 
 async function getOffendersStats(): Promise<OffenderStats[]> {
-  const submissions = await client.fetch<Array<{company: string, timeWasted: number, severity: string}>>(
-    `*[_type == "submission" && approved == true]{ company, timeWasted, severity }`
+  const submissions = await client.fetch<Array<{company: string, severity: string, meToos?: Array<{timeWasted: number}>}>>(
+    `*[_type == "submission" && approved == true]{ company, severity, meToos }`
   )
 
   // Aggregate by company
@@ -25,7 +25,14 @@ async function getOffendersStats(): Promise<OffenderStats[]> {
   submissions.forEach((sub) => {
     const existing = companyMap.get(sub.company) || { count: 0, totalTime: 0, severities: [] }
     existing.count++
-    existing.totalTime += sub.timeWasted || 0
+
+    // Add all Me Too time
+    if (sub.meToos) {
+      sub.meToos.forEach(meToo => {
+        existing.totalTime += meToo.timeWasted || 0
+      })
+    }
+
     existing.severities.push(severityValues[sub.severity] || 1)
     companyMap.set(sub.company, existing)
   })

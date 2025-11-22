@@ -24,6 +24,12 @@ export function urlFor(source: SanityImageSource) {
   return builder.image(source)
 }
 
+export interface MeTooEntry {
+  timeWasted: number
+  submittedBy: string
+  timestamp: string
+}
+
 export interface Submission {
   _id: string
   _createdAt: string
@@ -37,11 +43,14 @@ export interface Submission {
       _type: string
     }
   }
-  timeWasted: number
-  category: string
+  category?: string // legacy field
+  primaryCategory: string
+  subcategory: string
+  tags?: string[]
   severity: string
   submittedBy?: string
   upvotes: number
+  meToos?: MeTooEntry[]
   approved: boolean
   publishedAt: string
 }
