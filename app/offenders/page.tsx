@@ -11,7 +11,7 @@ interface OffenderStats {
 
 async function getOffendersStats(): Promise<OffenderStats[]> {
   const submissions = await client.fetch<Array<{company: string, severity: string, meToos?: Array<{timeWasted: number}>}>>(
-    `*[_type == "submission" && approved == true]{ company, severity, meToos }`
+    `*[_type == "submission" && approved == true && hiddenByModeration != true]{ company, severity, meToos }`
   )
 
   // Aggregate by company

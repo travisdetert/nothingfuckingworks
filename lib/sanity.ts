@@ -50,6 +50,7 @@ export interface Submission {
   severity: string
   submittedBy?: string
   upvotes: number
+  downvotes?: number
   meToos?: MeTooEntry[]
   approved: boolean
   publishedAt: string

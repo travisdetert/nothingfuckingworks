@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { writeClient, client } from '@/lib/sanity'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/lib/auth'
 
 // Helper function to create slug from product name
 function createSlug(name: string): string {
@@ -43,6 +45,8 @@ async function upsertProduct(company: string, modelNumber?: string) {
 
 export async function POST(request: NextRequest) {
   try {
+    const session = await getServerSession(authOptions)
+
     const formData = await request.formData()
 
     const title = formData.get('title') as string
@@ -74,6 +78,21 @@ export async function POST(request: NextRequest) {
     // Upsert product
     const productId = await upsertProduct(company, modelNumber || undefined)
 
+    // Get user ID from session or use legacy name
+    let userId = null
+    let displayName = submittedBy || 'Anonymous'
+
+    if (session?.user?.email) {
+      const sanityUser = await client.fetch(
+        `*[_type == "user" && email == $email][0]{ _id, name }`,
+        { email: session.user.email }
+      )
+      if (sanityUser) {
+        userId = sanityUser._id
+        displayName = sanityUser.name || session.user.name || 'Anonymous'
+      }
+    }
+
     // Create the submission document with initial meToo entry
     const submission = await writeClient.create({
       _type: 'submission',
@@ -84,7 +103,11 @@ export async function POST(request: NextRequest) {
       subcategory,
       tags: tags.length > 0 ? tags : undefined,
       severity,
-      submittedBy: submittedBy || 'Anonymous',
+      submittedBy: displayName,
+      user: userId ? {
+        _type: 'reference',
+        _ref: userId,
+      } : undefined,
       product: {
         _type: 'reference',
         _ref: productId,
@@ -98,9 +121,10 @@ export async function POST(request: NextRequest) {
       },
       meToos: [
         {
+          _key: `${userId || 'anon'}-${Date.now()}`,
           _type: 'object',
           timeWasted,
-          submittedBy: submittedBy || 'Anonymous',
+          submittedBy: displayName,
           timestamp: new Date().toISOString(),
         },
       ],

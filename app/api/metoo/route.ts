@@ -14,6 +14,7 @@ export async function POST(request: NextRequest) {
 
     // Create the Me Too entry
     const meTooEntry = {
+      _key: `${submittedBy || 'anon'}-${Date.now()}`,
       timeWasted: parseInt(timeWasted),
       submittedBy: submittedBy || 'Anonymous',
       timestamp: new Date().toISOString(),

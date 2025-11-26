@@ -8,7 +8,7 @@ interface MeTooModalProps {
   onClose: () => void
   submissionId: string
   submissionTitle: string
-  onSuccess: (stats: { totalIncidents: number; uniquePeople: number; totalTime: number }) => void
+  onSuccess: (stats: { totalIncidents: number; uniquePeople: number; totalTime: number; minTime: number; maxTime: number; avgTime: number }) => void
 }
 
 export default function MeTooModal({

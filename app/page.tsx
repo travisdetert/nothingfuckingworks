@@ -21,7 +21,7 @@ function formatTimeWasted(minutes: number): { value: string; unit: string; subte
 
 async function getSubmissions(): Promise<Submission[]> {
   const query = `
-    *[_type == "submission" && approved == true] | order(publishedAt desc) {
+    *[_type == "submission" && approved == true && hiddenByModeration != true] | order(publishedAt desc) {
       _id,
       _createdAt,
       title,
@@ -36,6 +36,7 @@ async function getSubmissions(): Promise<Submission[]> {
       severity,
       submittedBy,
       upvotes,
+      downvotes,
       meToos,
       approved,
       publishedAt
@@ -46,7 +47,7 @@ async function getSubmissions(): Promise<Submission[]> {
 
 async function getTotalStats() {
   const submissions = await client.fetch<Submission[]>(
-    `*[_type == "submission" && approved == true]{ company, meToos, severity, category, primaryCategory, publishedAt }`
+    `*[_type == "submission" && approved == true && hiddenByModeration != true]{ company, meToos, severity, category, primaryCategory, publishedAt }`
   )
 
   let totalTimeWasted = 0
@@ -191,86 +192,6 @@ export default async function Home({ searchParams }: PageProps) {
           </div>
         </div>
       </div>
-
-      {/* Secondary Stats */}
-      <div className="bg-yellow-400 border-b-4 border-black py-4">
-        <div className="container mx-auto px-4">
-          <div className="max-w-6xl mx-auto">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {/* Worst Offender */}
-              {stats.worstOffender.company && (
-                <Link href={`/offenders/${encodeURIComponent(stats.worstOffender.company)}`}>
-                  <div className="bg-white p-3 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all cursor-pointer">
-                    <div className="flex items-center justify-between gap-2">
-                      <div className="flex items-center gap-2">
-                        <span className="text-xl">👑</span>
-                        <div className="min-w-0">
-                          <div className="text-xs font-bold uppercase text-gray-600">Worst</div>
-                          <div className="text-sm font-black truncate">{stats.worstOffender.company}</div>
-                        </div>
-                      </div>
-                      <div className="text-xl font-black text-red-600 whitespace-nowrap">{formatTimeWasted(stats.worstOffender.time).value}</div>
-                    </div>
-                  </div>
-                </Link>
-              )}
-
-              {/* Rage Distribution */}
-              <div className="bg-white p-3 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-                <div className="text-xs font-black uppercase mb-2 text-gray-600">Rage Level</div>
-                <div className="flex items-center gap-1 h-6">
-                  <div className="flex-1 bg-yellow-500 border-2 border-black flex items-center justify-center text-xs font-bold" style={{ flex: stats.severityCount.mild }}>
-                    {stats.severityCount.mild > 0 && stats.severityCount.mild}
-                  </div>
-                  <div className="flex-1 bg-orange-500 border-2 border-black flex items-center justify-center text-xs font-bold text-white" style={{ flex: stats.severityCount.moderate }}>
-                    {stats.severityCount.moderate > 0 && stats.severityCount.moderate}
-                  </div>
-                  <div className="flex-1 bg-red-600 border-2 border-black flex items-center justify-center text-xs font-bold text-white" style={{ flex: stats.severityCount.severe }}>
-                    {stats.severityCount.severe > 0 && stats.severityCount.severe}
-                  </div>
-                </div>
-              </div>
-
-              {/* Top Category */}
-              <div className="bg-white p-3 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-                <div className="text-xs font-black uppercase mb-2 text-gray-600">Top Culprit</div>
-                {Object.entries(stats.categoryCount).sort(([, a], [, b]) => b - a)[0] && (
-                  <div className="flex items-center justify-between">
-                    <div className="text-sm font-black">{categoryLabels[Object.entries(stats.categoryCount).sort(([, a], [, b]) => b - a)[0][0]]}</div>
-                    <div className="text-xl font-black text-blue-600">{Object.entries(stats.categoryCount).sort(([, a], [, b]) => b - a)[0][1]}</div>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Navigation */}
-      <nav className="bg-black text-white border-b-4 border-black sticky top-0 z-10">
-        <div className="container mx-auto px-4">
-          <div className="flex justify-center gap-3 py-3 flex-wrap">
-            <Link
-              href="/categories"
-              className="px-4 py-2 bg-white text-black font-bold uppercase text-sm hover:bg-yellow-400 transition-colors"
-            >
-              Categories
-            </Link>
-            <Link
-              href="/offenders"
-              className="px-4 py-2 bg-white text-black font-bold uppercase text-sm hover:bg-yellow-400 transition-colors"
-            >
-              Offenders
-            </Link>
-            <Link
-              href="/submit"
-              className="px-4 py-2 bg-yellow-400 text-black font-bold uppercase text-sm hover:bg-white transition-colors"
-            >
-              Submit
-            </Link>
-          </div>
-        </div>
-      </nav>
 
       {/* Category Filter */}
       <div className="bg-white border-b-4 border-black">

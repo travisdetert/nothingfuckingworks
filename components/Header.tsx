@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import AuthButton from './AuthButton'
 
 interface HeaderProps {
   showCategories?: boolean
@@ -52,6 +53,7 @@ export default function Header({ showCategories = false }: HeaderProps) {
                 {link.label}
               </Link>
             ))}
+            <AuthButton />
           </div>
         </div>
       </nav>

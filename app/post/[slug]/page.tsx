@@ -5,6 +5,7 @@ import { Metadata } from 'next'
 import { client, urlFor, Submission } from '@/lib/sanity'
 import Giscus from '@/components/Giscus'
 import MeTooButton from '@/components/MeTooButton'
+import ModerationButtons from '@/components/ModerationButtons'
 import Header from '@/components/Header'
 
 interface PageProps {
@@ -41,6 +42,7 @@ async function getSubmission(slug: string): Promise<Submission | null> {
       severity,
       submittedBy,
       upvotes,
+      downvotes,
       meToos,
       approved,
       publishedAt
@@ -116,16 +118,20 @@ export default async function PostPage({ params }: PageProps) {
                 </Link>
               </div>
 
-              <div className="flex flex-wrap gap-2 mb-4">
-                <span className="px-3 py-1.5 bg-black text-white font-bold text-xs uppercase">
-                  {categoryLabels[submission.category]}
-                </span>
+              <div className="flex flex-wrap gap-2 mb-4 items-center">
+                {submission.category && (
+                  <span className="px-3 py-1.5 bg-black text-white font-bold text-xs uppercase">
+                    {categoryLabels[submission.category]}
+                  </span>
+                )}
                 <span className="px-3 py-1.5 bg-red-500 text-white font-bold text-xs uppercase">
                   {severityLabels[submission.severity]}
                 </span>
-                <span className="px-3 py-1.5 border-2 border-black font-bold text-xs uppercase">
-                  👍 {submission.upvotes}
+                <span className="flex items-center gap-1.5 px-3 py-1.5 border-2 border-black bg-yellow-400 font-bold text-xs uppercase">
+                  <span className="text-base">🖕</span>
+                  <span>Upvoted ({submission.upvotes})</span>
                 </span>
+                <ModerationButtons submissionId={submission._id} initialDownvotes={submission.downvotes} />
               </div>
 
               <div className="text-lg leading-relaxed mb-4">

@@ -122,7 +122,7 @@ export const product = defineType({
     },
     prepare({ title, subtitle, modelNumber, media, discontinued }) {
       return {
-        title: `${discontinued ? '🚫 ' : ''}${title}${modelNumber ? ` (${modelNumber})` : ''}`,
+        title: `${discontinued ? '[DISCONTINUED] ' : ''}${title}${modelNumber ? ` (${modelNumber})` : ''}`,
         subtitle: subtitle,
         media: media,
       }
@@ -187,19 +187,19 @@ export const submission = defineType({
       type: 'string',
       options: {
         list: [
-          { title: '💻 Digital Software', value: 'digital-software' },
-          { title: '🔧 Hardware & Devices', value: 'hardware-devices' },
-          { title: '🚗 Transportation & Automotive', value: 'transportation-auto' },
-          { title: '🏠 Home & Living', value: 'home-living' },
-          { title: '🏢 Enterprise & Business', value: 'enterprise-business' },
-          { title: '🎮 Entertainment & Media', value: 'entertainment-media' },
-          { title: '🏥 Healthcare & Wellness', value: 'healthcare-wellness' },
-          { title: '🎓 Education & Learning', value: 'education-learning' },
-          { title: '🏛️ Government & Public Services', value: 'government-public' },
-          { title: '💳 Finance & Commerce', value: 'finance-commerce' },
-          { title: '🌐 Infrastructure & Utilities', value: 'infrastructure-utilities' },
-          { title: '📱 Mobile & Wearables', value: 'mobile-wearables' },
-          { title: '🤝 Other', value: 'other' },
+          { title: 'Digital Software', value: 'digital-software' },
+          { title: 'Hardware & Devices', value: 'hardware-devices' },
+          { title: 'Transportation & Automotive', value: 'transportation-auto' },
+          { title: 'Home & Living', value: 'home-living' },
+          { title: 'Enterprise & Business', value: 'enterprise-business' },
+          { title: 'Entertainment & Media', value: 'entertainment-media' },
+          { title: 'Healthcare & Wellness', value: 'healthcare-wellness' },
+          { title: 'Education & Learning', value: 'education-learning' },
+          { title: 'Government & Public Services', value: 'government-public' },
+          { title: 'Finance & Commerce', value: 'finance-commerce' },
+          { title: 'Infrastructure & Utilities', value: 'infrastructure-utilities' },
+          { title: 'Mobile & Wearables', value: 'mobile-wearables' },
+          { title: 'Other', value: 'other' },
         ],
       },
       validation: (Rule) => Rule.required(),
@@ -218,24 +218,24 @@ export const submission = defineType({
       of: [{ type: 'string' }],
       options: {
         list: [
-          { title: '🔒 Privacy Violation', value: 'privacy-violation' },
-          { title: '💾 Data Loss', value: 'data-loss' },
-          { title: '♿ Accessibility Fail', value: 'accessibility-fail' },
-          { title: '🐌 Performance Issue', value: 'performance-issue' },
-          { title: '🔐 Security Flaw', value: 'security-flaw' },
-          { title: '💸 Money Wasted', value: 'money-wasted' },
-          { title: '🎨 UX Nightmare', value: 'ux-nightmare' },
-          { title: '📞 No Support', value: 'no-support' },
-          { title: '🔄 Forced Update', value: 'forced-update' },
-          { title: '🪲 Known Bug Ignored', value: 'known-bug-ignored' },
-          { title: '🔌 Incompatibility', value: 'incompatibility' },
-          { title: '📵 Offline Broken', value: 'offline-broken' },
-          { title: '🎯 Dark Pattern', value: 'dark-pattern' },
-          { title: '🔊 Notification Spam', value: 'notification-spam' },
-          { title: '⚠️ Safety Issue', value: 'safety-issue' },
-          { title: '🌍 Regional Lock', value: 'regional-lock' },
-          { title: '💰 Hidden Cost', value: 'hidden-cost' },
-          { title: '🔒 Vendor Lock-in', value: 'vendor-lockin' },
+          { title: 'Privacy Violation', value: 'privacy-violation' },
+          { title: 'Data Loss', value: 'data-loss' },
+          { title: 'Accessibility Fail', value: 'accessibility-fail' },
+          { title: 'Performance Issue', value: 'performance-issue' },
+          { title: 'Security Flaw', value: 'security-flaw' },
+          { title: 'Money Wasted', value: 'money-wasted' },
+          { title: 'UX Nightmare', value: 'ux-nightmare' },
+          { title: 'No Support', value: 'no-support' },
+          { title: 'Forced Update', value: 'forced-update' },
+          { title: 'Known Bug Ignored', value: 'known-bug-ignored' },
+          { title: 'Incompatibility', value: 'incompatibility' },
+          { title: 'Offline Broken', value: 'offline-broken' },
+          { title: 'Dark Pattern', value: 'dark-pattern' },
+          { title: 'Notification Spam', value: 'notification-spam' },
+          { title: 'Safety Issue', value: 'safety-issue' },
+          { title: 'Regional Lock', value: 'regional-lock' },
+          { title: 'Hidden Cost', value: 'hidden-cost' },
+          { title: 'Vendor Lock-in', value: 'vendor-lockin' },
         ],
       },
     }),
@@ -252,20 +252,29 @@ export const submission = defineType({
       type: 'string',
       options: {
         list: [
-          { title: '😐 Trivial - Minor inconvenience', value: 'trivial' },
-          { title: '😠 Mild - Annoying but workable', value: 'mild' },
-          { title: '😤 Moderate - Frustrating issue', value: 'moderate' },
-          { title: '🤬 Serious - Rage inducing', value: 'serious' },
-          { title: '💀 Severe - Soul crushing', value: 'severe' },
-          { title: '☠️ Critical - Completely broken', value: 'critical' },
+          { title: 'Trivial - Minor inconvenience', value: 'trivial' },
+          { title: 'Mild - Annoying but workable', value: 'mild' },
+          { title: 'Moderate - Frustrating issue', value: 'moderate' },
+          { title: 'Serious - Rage inducing', value: 'serious' },
+          { title: 'Severe - Soul crushing', value: 'severe' },
+          { title: 'Critical - Completely broken', value: 'critical' },
         ],
       },
       validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: 'submittedBy',
-      title: 'Submitted By',
+      title: 'Submitted By (Legacy)',
       type: 'string',
+      description: 'Legacy field for anonymous submissions',
+      hidden: true,
+    }),
+    defineField({
+      name: 'user',
+      title: 'User',
+      type: 'reference',
+      to: [{ type: 'user' }],
+      description: 'User who submitted this',
     }),
     defineField({
       name: 'upvotes',
@@ -275,12 +284,97 @@ export const submission = defineType({
       readOnly: true,
     }),
     defineField({
+      name: 'upvotedBy',
+      title: 'Upvoted By',
+      type: 'array',
+      of: [{ type: 'reference', to: [{ type: 'user' }], weak: true }],
+      description: 'Users who upvoted this submission',
+      hidden: true,
+    }),
+    defineField({
+      name: 'downvotes',
+      title: 'Downvotes',
+      type: 'number',
+      initialValue: 0,
+      readOnly: true,
+    }),
+    defineField({
+      name: 'downvotedBy',
+      title: 'Downvoted By',
+      type: 'array',
+      of: [{ type: 'reference', to: [{ type: 'user' }], weak: true }],
+      description: 'Users who downvoted this submission',
+      hidden: true,
+    }),
+    defineField({
+      name: 'flags',
+      title: 'Community Flags',
+      type: 'array',
+      of: [
+        {
+          type: 'object',
+          name: 'flag',
+          fields: [
+            {
+              name: 'reason',
+              title: 'Reason',
+              type: 'string',
+              options: {
+                list: [
+                  { title: 'Not a real issue - just whining', value: 'whining' },
+                  { title: 'Not enough detail', value: 'low-detail' },
+                  { title: 'Spam or duplicate', value: 'spam' },
+                  { title: 'Inappropriate content', value: 'inappropriate' },
+                  { title: 'User error, not a bug', value: 'user-error' },
+                  { title: 'Already fixed', value: 'fixed' },
+                ],
+              },
+            },
+            {
+              name: 'flaggedBy',
+              title: 'Flagged By (Legacy)',
+              type: 'string',
+              hidden: true,
+            },
+            {
+              name: 'user',
+              title: 'User',
+              type: 'reference',
+              to: [{ type: 'user' }],
+              weak: true,
+            },
+            {
+              name: 'timestamp',
+              title: 'Timestamp',
+              type: 'datetime',
+            },
+          ],
+        },
+      ],
+    }),
+    defineField({
+      name: 'qualityScore',
+      title: 'Quality Score',
+      type: 'number',
+      description: 'Calculated from upvotes, downvotes, and flags. Auto-hidden if too low.',
+      initialValue: 0,
+      readOnly: true,
+    }),
+    defineField({
+      name: 'hiddenByModeration',
+      title: 'Hidden by Community Moderation',
+      type: 'boolean',
+      initialValue: false,
+      description: 'Auto-hidden when quality score drops too low',
+    }),
+    defineField({
       name: 'meToos',
       title: 'Me Too Reports',
       type: 'array',
       of: [
         {
           type: 'object',
+          name: 'meToo',
           fields: [
             {
               name: 'timeWasted',
@@ -292,31 +386,15 @@ export const submission = defineType({
               name: 'submittedBy',
               title: 'Submitted By',
               type: 'string',
-              initialValue: 'Anonymous',
             },
             {
               name: 'timestamp',
               title: 'Timestamp',
               type: 'datetime',
-              initialValue: () => new Date().toISOString(),
             },
           ],
-          preview: {
-            select: {
-              submittedBy: 'submittedBy',
-              timeWasted: 'timeWasted',
-              timestamp: 'timestamp',
-            },
-            prepare({ submittedBy, timeWasted, timestamp }) {
-              return {
-                title: `${submittedBy || 'Anonymous'} - ${timeWasted} min`,
-                subtitle: new Date(timestamp).toLocaleDateString(),
-              }
-            },
-          },
         },
       ],
-      initialValue: [],
     }),
     defineField({
       name: 'approved',
@@ -329,7 +407,6 @@ export const submission = defineType({
       name: 'publishedAt',
       title: 'Published At',
       type: 'datetime',
-      initialValue: () => new Date().toISOString(),
     }),
   ],
   preview: {
@@ -342,7 +419,7 @@ export const submission = defineType({
     prepare(selection) {
       const { title, company, approved } = selection
       return {
-        title: `${approved ? '✅' : '⏳'} ${title}`,
+        title: `${approved ? '[APPROVED] ' : '[PENDING] '}${title}`,
         subtitle: company,
         media: selection.media,
       }
@@ -350,4 +427,61 @@ export const submission = defineType({
   },
 })
 
-export const schemaTypes = [product, submission]
+export const user = defineType({
+  name: 'user',
+  title: 'User',
+  type: 'document',
+  fields: [
+    defineField({
+      name: 'email',
+      title: 'Email',
+      type: 'string',
+      validation: (Rule) => Rule.required().email(),
+    }),
+    defineField({
+      name: 'name',
+      title: 'Name',
+      type: 'string',
+    }),
+    defineField({
+      name: 'image',
+      title: 'Profile Image',
+      type: 'url',
+    }),
+    defineField({
+      name: 'provider',
+      title: 'Auth Provider',
+      type: 'string',
+      options: {
+        list: [
+          { title: 'Google', value: 'google' },
+          { title: 'Facebook', value: 'facebook' },
+          { title: 'Apple', value: 'apple' },
+        ],
+      },
+    }),
+    defineField({
+      name: 'providerId',
+      title: 'Provider ID',
+      type: 'string',
+    }),
+    defineField({
+      name: 'createdAt',
+      title: 'Created At',
+      type: 'datetime',
+    }),
+    defineField({
+      name: 'lastLogin',
+      title: 'Last Login',
+      type: 'datetime',
+    }),
+  ],
+  preview: {
+    select: {
+      title: 'name',
+      subtitle: 'email',
+    },
+  },
+})
+
+export const schemaTypes = [product, submission, user]

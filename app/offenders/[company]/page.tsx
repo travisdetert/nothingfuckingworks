@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 async function getSubmissionsByCompany(company: string): Promise<Submission[]> {
   const decodedCompany = decodeURIComponent(company)
   const query = `
-    *[_type == "submission" && approved == true && company == $company] | order(publishedAt desc) {
+    *[_type == "submission" && approved == true && hiddenByModeration != true && company == $company] | order(publishedAt desc) {
       _id,
       _createdAt,
       title,
@@ -33,6 +33,7 @@ async function getSubmissionsByCompany(company: string): Promise<Submission[]> {
       severity,
       submittedBy,
       upvotes,
+      downvotes,
       meToos,
       approved,
       publishedAt

@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 async function getSubmissionsByCategory(category: string): Promise<Submission[]> {
   const query = `
-    *[_type == "submission" && approved == true && primaryCategory == $category] | order(publishedAt desc) {
+    *[_type == "submission" && approved == true && hiddenByModeration != true && primaryCategory == $category] | order(publishedAt desc) {
       _id,
       _createdAt,
       title,
@@ -43,6 +43,7 @@ async function getSubmissionsByCategory(category: string): Promise<Submission[]>
       severity,
       submittedBy,
       upvotes,
+      downvotes,
       meToos,
       approved,
       publishedAt

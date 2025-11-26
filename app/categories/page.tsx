@@ -17,7 +17,7 @@ async function getCategoryStats(): Promise<CategoryStats[]> {
     subcategory: string
     severity: string
     meToos?: Array<{timeWasted: number}>
-  }>>(`*[_type == "submission" && approved == true]{ primaryCategory, subcategory, severity, meToos }`)
+  }>>(`*[_type == "submission" && approved == true && hiddenByModeration != true]{ primaryCategory, subcategory, severity, meToos }`)
 
   // Aggregate by primary category
   const categoryMap = new Map<string, { count: number; totalReports: number; totalTime: number; severities: number[] }>()

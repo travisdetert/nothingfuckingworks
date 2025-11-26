@@ -5,6 +5,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Submission, urlFor } from '@/lib/sanity'
 import MeTooModal from './MeTooModal'
+import ModerationButtons from './ModerationButtons'
 
 interface SubmissionCardProps {
   submission: Submission
@@ -74,9 +75,13 @@ export default function SubmissionCard({ submission }: SubmissionCardProps) {
         const data = await response.json()
         setUpvotes(data.upvotes)
         setHasVoted(true)
+      } else {
+        const error = await response.json()
+        alert(error.error || 'Failed to upvote')
       }
     } catch (error) {
       console.error('Upvote failed:', error)
+      alert('Failed to upvote')
     }
   }
 
@@ -101,28 +106,13 @@ export default function SubmissionCard({ submission }: SubmissionCardProps) {
       </Link>
 
       <div className="p-6">
-        <div className="flex items-start justify-between gap-4 mb-2">
-          <Link href={`/post/${submission.slug.current}`}>
-            <h2 className="text-2xl font-black uppercase hover:underline cursor-pointer">
-              {submission.title}
-            </h2>
-          </Link>
+        <Link href={`/post/${submission.slug.current}`}>
+          <h2 className="text-2xl font-black uppercase hover:underline cursor-pointer mb-3">
+            {submission.title}
+          </h2>
+        </Link>
 
-          <button
-            onClick={handleUpvote}
-            disabled={hasVoted}
-            className={`flex flex-col items-center gap-1 px-4 py-2 border-2 border-black font-bold min-w-[70px] ${
-              hasVoted
-                ? 'bg-yellow-400 cursor-default'
-                : 'bg-white hover:bg-yellow-400 cursor-pointer'
-            }`}
-          >
-            <span className="text-2xl">👍</span>
-            <span className="text-sm">{upvotes}</span>
-          </button>
-        </div>
-
-        <div className="mb-4">
+        <div className="mb-3">
           <Link href={`/offenders/${encodeURIComponent(submission.company)}`}>
             <span className="text-lg font-bold text-red-600 hover:underline cursor-pointer">
               {submission.company}
@@ -133,9 +123,11 @@ export default function SubmissionCard({ submission }: SubmissionCardProps) {
         <p className="mb-4 text-gray-700">{submission.description}</p>
 
         <div className="flex flex-wrap gap-2 mb-4">
-          <span className="px-3 py-1 bg-black text-white font-bold text-xs uppercase">
-            {categoryLabels[submission.category]}
-          </span>
+          {submission.category && (
+            <span className="px-3 py-1 bg-black text-white font-bold text-xs uppercase">
+              {categoryLabels[submission.category]}
+            </span>
+          )}
           <span className="px-3 py-1 bg-red-500 text-white font-bold text-xs uppercase">
             {severityLabels[submission.severity]}
           </span>
@@ -171,10 +163,27 @@ export default function SubmissionCard({ submission }: SubmissionCardProps) {
 
         <button
           onClick={() => setShowMeTooModal(true)}
-          className="w-full px-4 py-3 bg-yellow-400 text-black font-black uppercase text-base border-4 border-black hover:bg-yellow-500 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all"
+          className="w-full px-4 py-3 bg-yellow-400 text-black font-black uppercase text-base border-4 border-black hover:bg-yellow-500 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all mb-3"
         >
           🤬 I am also fucking annoyed with this bullshit
         </button>
+
+        <div className="flex items-center justify-between border-t-2 border-gray-200 pt-3">
+          <button
+            onClick={handleUpvote}
+            disabled={hasVoted}
+            className={`flex items-center gap-1.5 px-3 py-1.5 border-2 border-black text-xs font-bold ${
+              hasVoted
+                ? 'bg-yellow-400 cursor-default'
+                : 'bg-white hover:bg-yellow-400 cursor-pointer'
+            }`}
+          >
+            <span className="text-base">🖕</span>
+            <span>Upvote</span>
+            {upvotes > 0 && <span className="ml-0.5">({upvotes})</span>}
+          </button>
+          <ModerationButtons submissionId={submission._id} initialDownvotes={submission.downvotes} />
+        </div>
       </div>
 
       <MeTooModal
